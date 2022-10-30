@@ -28,6 +28,11 @@ const getProducts = async (req, res) => {
 
   const products = await result;
 
+  for (const product of products) {
+    const category = await Category.findById(product.category.valueOf());
+    if (category) product.category = category;
+  }
+
   res.status(StatusCodes.OK).json({
     products,
     total: products.length,
@@ -41,6 +46,10 @@ const getProduct = async (req, res) => {
   const { id: ProductID } = req.params;
   const product = await Product.findById(ProductID);
   if (!product) throw Error(`No Product with id: ${ProductID}`);
+
+  const category = await Category.findById(product.category.valueOf());
+  if (!category) throw Error();
+  product.category = category;
   res.status(StatusCodes.OK).json({ product });
 };
 
